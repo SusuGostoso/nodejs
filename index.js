@@ -1,4 +1,5 @@
 const admin = require('firebase-admin');
+const { Timestamp } = require('firebase-admin/firestore');
 const express = require('express');
 const cors = require('cors');
 const port = 3000
@@ -66,6 +67,7 @@ app.get("/cadastrar/:matricula/:turma/:nome",  (req, res) => {
   (async () => {
       
     try {
+      const timestamp = new Date();
 
       const god = await db.collection('discentes').doc(req.params.matricula).set({
         nome: req.params.nome,
@@ -74,10 +76,9 @@ app.get("/cadastrar/:matricula/:turma/:nome",  (req, res) => {
         confirmado: 0,
         turma: req.params.turma,
         telefone: "",
-        sexo: 1
+        sexo: 1,
+        last_update: Timestamp.fromDate(timestamp),
       });
-
-
       
       return res.status(200).send({
         resultado: (god != null) ? true : false
