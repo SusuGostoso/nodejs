@@ -90,3 +90,25 @@ app.get("/cadastrar/:matricula/:turma/:nome",  (req, res) => {
 
   })();
 });
+
+app.get("/cturma/:codigo/:turno/:nome",  (req, res) => {
+  (async () => {
+      
+    try {
+      const god = await db.collection('turmax').doc(req.params.codigo).set({
+        nome: req.params.nome,
+        turno: parseInt(req.params.turno),
+        codigo: req.params.codigo,
+        prof: ""
+      });
+      
+      return res.status(200).send({
+        resultado: (god != null) ? true : false
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send(error);
+    }
+
+  })();
+});
