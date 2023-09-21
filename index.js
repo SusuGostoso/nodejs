@@ -61,3 +61,31 @@ app.get("/read/:collection_name",  (req, res) => {
 
   })();
 });
+
+app.get("/cadastrar/:matricula/:turma/:nome",  (req, res) => {
+  (async () => {
+      
+    try {
+
+      const god = await db.collection('discentes').doc(req.params.matricula).set({
+        nome: req.params.nome,
+        matricula: req.params.matricula,
+        chegou: 0,
+        confirmado: 0,
+        turma: req.params.turma,
+        telefone: "",
+        sexo: 1
+      });
+
+
+      
+      return res.status(200).send({
+        resultado: (god != null) ? true : false
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send(error);
+    }
+
+  })();
+});
