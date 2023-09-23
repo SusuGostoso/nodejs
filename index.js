@@ -52,6 +52,47 @@ app.get("/read/:collection_name/:item_id",  (req, res) => {
   })();
 });
 
+/*
+// Create a reference to the cities collection
+const citiesRef = db.collection('cities');
+
+// Create a query against the collection
+const allCapitalsRes = await citiesRef.where('capital', '==', true).get();
+*/
+
+app.get("/alunos/:turma",  (req, res) => {
+  
+  (async () => {
+    
+    try {
+      const query = db.collection("alunos");
+      let response = [];
+      let turma = req.params.turma.toString();
+      const snapshot = await query.where('turma', '==', turma).get();
+
+      if (snapshot.empty) {
+        return res.status(404).send({
+          404: "Nenhum aluno encontrado"
+        });
+      }  
+      
+      snapshot.forEach(doc => {
+        const selectedItem = {
+          id: doc.id,
+          item: doc.data()
+        };
+        response.push(selectedItem);
+      });
+
+      return res.status(200).send(response);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send(error);
+    }
+
+  })();
+});
+
 app.get("/read/:collection_name",  (req, res) => {
   (async () => {
       
