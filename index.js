@@ -113,7 +113,7 @@ app.get("/alunos/:turma",  (req, res) => {
         
         const selectedItem = {
           id: doc.id,
-          //matricula: dat["matricula"],
+          matricula: dat["mat"],
           nome: dat["nome"],
           chegou: dat["chegou"],
           confirmado: dat["confirmado"]
