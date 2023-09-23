@@ -60,6 +60,43 @@ const citiesRef = db.collection('cities');
 const allCapitalsRes = await citiesRef.where('capital', '==', true).get();
 */
 
+app.get("/susu/:aluno_mat/:aluno_nome",  (req, res) => {
+  (async () => {
+      
+    try {
+      const query = db.collection("discentes");
+      const snapshot = await query.where('nome', '==', req.params.aluno_nome.toString()).get();
+
+      if(snapshot.empty)
+      {
+        return res.status(404).send({
+          404: "Nenhum aluno encontrado"
+        });
+      }
+
+      if(snapshot.size > 1)
+      {
+        return res.status(404).send({
+          404: "Dois ou mais alunos foram encontrados"
+        });
+      }
+    
+
+      await snapshot.docs[0].ref.set({
+        mat: req.params.aluno_mat.toString()
+      }, { merge: true });
+      
+      return res.status(200).send({
+        message: "aluno modificado"
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send(error);
+    }
+
+  })();
+});
+
 app.get("/alunos/:turma",  (req, res) => {
   
   (async () => {
@@ -68,18 +105,24 @@ app.get("/alunos/:turma",  (req, res) => {
       const query = db.collection("alunos");
       let response = [];
       let turma = req.params.turma.toString();
-      const snapshot = await query.where('turma', '==', turma).get();
+      const snapshot = await query.where('turma', '==', turma).where('confirmado', '==', 0).get();
 
       if (snapshot.empty) {
         return res.status(404).send({
           404: "Nenhum aluno encontrado"
         });
-      }  
+      }
       
       snapshot.forEach(doc => {
+        const dat = doc.data();
+
+        
         const selectedItem = {
           id: doc.id,
-          item: doc.data()
+          //matricula: dat["matricula"],
+          nome: dat["nome"],
+          chegou: dat["chegou"],
+          confirmado: dat["confirmado"]
         };
         response.push(selectedItem);
       });
