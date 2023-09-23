@@ -60,25 +60,21 @@ const citiesRef = db.collection('cities');
 const allCapitalsRes = await citiesRef.where('capital', '==', true).get();
 */
 
-app.get("/susu/:aluno_mat/:aluno_nome",  (req, res) => {
+app.get("/susu/:aluno_mat/:codigo_turma/:aluno_nome",  (req, res) => {
   (async () => {
       
     try {
-      const query = db.collection("discentes");
-      const snapshot = await query.where('nome', '==', req.params.aluno_nome.toString()).get();
+      const query = db.collection("alunos");
+      const snapshot = await query.where('turma', '==', req.params.codigo_turma.toString()).where('nome', '==', req.params.aluno_nome.toString()).get();
 
       if(snapshot.empty)
       {
-        return res.status(404).send({
-          404: "Nenhum aluno encontrado"
-        });
+        return res.status(404).send("Nenhum aluno encontrado: "+req.params.aluno_nome.toString());
       }
 
       if(snapshot.size > 1)
       {
-        return res.status(404).send({
-          404: "Dois ou mais alunos foram encontrados"
-        });
+        return res.status(404).send("Dois alunos ou mais: "+req.params.aluno_nome.toString());
       }
     
 
@@ -86,9 +82,7 @@ app.get("/susu/:aluno_mat/:aluno_nome",  (req, res) => {
         mat: req.params.aluno_mat.toString()
       }, { merge: true });
       
-      return res.status(200).send({
-        message: "aluno modificado"
-      });
+      return res.status(200).send("OK: "+req.params.aluno_nome.toString());
     } catch (error) {
       console.log(error);
       return res.status(500).send(error);
