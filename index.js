@@ -19,10 +19,27 @@ app.listen(port, () => {
   console.log("Listening in port "+port)
 });
 
+app.get("/frequencia/:dia_codigo",  (req, res) => {
+  (async () => {
+      
+    try {
+      const document = db.collection("frequencia").doc((req.params.dia_codigo.toString()));
+      let item = await document.get();
+      let response = item.data();
+      return res.status(200).send(response);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send(error);
+    }
+
+  })();
+});
+
 app.get("/read/:collection_name/:item_id",  (req, res) => {
   (async () => {
       
     try {
+      
       const document = db.collection(req.params.collection_name).doc(req.params.item_id);
       let item = await document.get();
       let response = item.data();
