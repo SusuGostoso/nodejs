@@ -221,22 +221,3 @@ app.get("/cturma/:codigo/:turno/:nome",  (req, res) => {
 
   })();
 });
-
-/*
-app.get("/cadastrar/:collection_name/:nome",  (req, res) => {
-  (async () => {
-      
-    try {
-      const conc = await db.collection(req.params.collection_name).add({
-        name: req.params.nome,
-        country: 'Triste'
-      });
-      
-      return res.status(200).send(conc.id);
-    } catch (error) {
-      console.log(error);
-      return res.status(500).send(error);
-    }
-
-  })();
-});*/
