@@ -19,13 +19,24 @@ app.listen(port, () => {
   console.log("Listening in port "+port)
 });
 
-app.get("/frequencia/:dia_codigo",  (req, res) => {
+app.get("/freq/:turma",  (req, res) => {
+  
   (async () => {
-      
+    
     try {
-      const document = db.collection("frequencia").doc((req.params.dia_codigo.toString()));
-      let item = await document.get();
-      let response = item.data();
+      const query = db.collection("frequencia");
+
+      let turma = req.params.turma.toString();
+      const snapshot = await query.doc(turma).get();
+
+      if (snapshot.empty) {
+        return res.status(404).send({
+          404: "Nenhum aluno encontrado"
+        });
+      }
+      
+      let response = snapshot.data();
+
       return res.status(200).send(response);
     } catch (error) {
       console.log(error);
@@ -37,7 +48,10 @@ app.get("/frequencia/:dia_codigo",  (req, res) => {
 
 app.get("/read/:collection_name/:item_id",  (req, res) => {
   (async () => {
-      
+    res.set({
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    });
     try {
       
       const document = db.collection(req.params.collection_name).doc(req.params.item_id);
@@ -207,3 +221,22 @@ app.get("/cturma/:codigo/:turno/:nome",  (req, res) => {
 
   })();
 });
+
+/*
+app.get("/cadastrar/:collection_name/:nome",  (req, res) => {
+  (async () => {
+      
+    try {
+      const conc = await db.collection(req.params.collection_name).add({
+        name: req.params.nome,
+        country: 'Triste'
+      });
+      
+      return res.status(200).send(conc.id);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send(error);
+    }
+
+  })();
+});*/
